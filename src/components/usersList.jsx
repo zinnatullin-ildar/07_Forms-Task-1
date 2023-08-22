@@ -15,6 +15,7 @@ const UsersList = () => {
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
     const pageSize = 8; // количество отображаемых юзеров на странице
     const [users, setUsers] = useState([]);
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data));
@@ -68,11 +69,13 @@ const UsersList = () => {
             : users;
 
         const count = filteredUsers.length; // количество юзеров
+
         const sortedUsers = _.orderBy(
             filteredUsers,
             [sortBy.path],
             [sortBy.order]
-        ); // выборка отсортированных юзеров (asc - по возрастанию, desс - по-убыванию)
+        ); // выборка отсортированных юзеров (asc - по возрастанию, desс - по убыванию)
+
         const usersCrop = paginate(sortedUsers, currentPage, pageSize); // выборка отфильтрованных юзеров
         // console.log(userCrop);
 
@@ -92,6 +95,15 @@ const UsersList = () => {
         useEffect(() => {
             setCurrentPage(1);
         }, [selectedProf]);
+
+        const handleSearch = ({ target }) => {
+            // console.log(target.value);
+            setSearch(target.value);
+            if (search) {
+                setSelectedProf();
+                setCurrentPage(1);
+            }
+        };
 
         return (
             <div className="d-flex">
@@ -113,6 +125,13 @@ const UsersList = () => {
 
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
+                    <input
+                        className="w-50 mx-auto"
+                        name="search"
+                        placeholder="Search..."
+                        onChange={handleSearch}
+                    />
+
                     {count > 0 && (
                         <UserTable
                             users={usersCrop}
@@ -120,9 +139,9 @@ const UsersList = () => {
                             selectedSort={sortBy}
                             onDelete={handleDelete}
                             onToggleBookmark={handleToggleBookmark}
+                            search={search}
                         />
                     )}
-
                     <div className="d-flex justify-content-center">
                         <Pagination
                             itemsCount={count}

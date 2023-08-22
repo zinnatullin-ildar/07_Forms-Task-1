@@ -21,7 +21,11 @@ module.exports = {
     },
     plugins: ["react", "prettier"],
     rules: {
-        indent: ["error", 4], // отступ, количество пробелов
+        indent: [
+            "error",
+            4,
+            { SwitchCase: 1, ignoredNodes: ["ConditionalExpression"] }
+        ], // отступ, количество пробелов, исправление ошибки с отступами в условных выражениях
         semi: [2, "always"], // точка с запятой в конце строки
         quotes: ["error", "double", { allowTemplateLiterals: true }], // использование двойных и обратных кавычек
         "space-before-function-paren": [

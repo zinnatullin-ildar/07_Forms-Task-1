@@ -1,20 +1,7 @@
 import PropTypes from "prop-types";
 import _ from "lodash";
 
-// Итерирование по таблице как по двумерному массиву
-
-// const twoArray = [
-//     ["[i][j]",   "[i][j+1]",   "...",   "[i][j+n]"],
-//     ["[i+1][j]", "[i+1][j+1]", "...", "[i+1][j+n]"],
-//     [    "...",     "...",     "...",     "..."   ],
-//     ["[i+m][j]", "[i+m][j+1]", "...", "[i+m][j+n]"]
-// ];
-
-// for (let i = 0; i < twoArray.length; i++) {
-//     for (let j = 0; i < twoArray[i].length; j++) {}
-// } // итерация сначала по строкам, затем по столбцам
-
-const TableBody = ({ data, columns }) => {
+const TableBody = ({ data, columns, search }) => {
     const renderContent = (item, column) => {
         if (columns[column].component) {
             const component = columns[column].component;
@@ -30,20 +17,25 @@ const TableBody = ({ data, columns }) => {
 
     return (
         <tbody>
-            {data.map((item) => (
-                <tr key={item._id}>
-                    {Object.keys(columns).map((column) => (
-                        <td key={column}>{renderContent(item, column)}</td>
-                    ))}
-                </tr>
-            ))}
+            {data
+                .filter((item) =>
+                    item.name.toLowerCase().includes(search.toLowerCase())
+                )
+                .map((item) => (
+                    <tr key={item._id}>
+                        {Object.keys(columns).map((column) => (
+                            <td key={column}>{renderContent(item, column)}</td>
+                        ))}
+                    </tr>
+                ))}
         </tbody>
     );
-}; // универсальная таблица под любой массив данных
+}; // универсальная таблица под любой массив данных + поиск по имени
 
 TableBody.propTypes = {
     data: PropTypes.array.isRequired,
-    columns: PropTypes.object.isRequired
+    columns: PropTypes.object.isRequired,
+    search: PropTypes.string
 };
 
 export default TableBody;
