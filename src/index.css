@@ -1,0 +1,4 @@
+/* отключаем вывод ошибок на экран и его блокирование */
+#webpack-dev-server-client-overlay {
+    display: none;
+}

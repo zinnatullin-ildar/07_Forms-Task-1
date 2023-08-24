@@ -13,7 +13,7 @@ const UsersList = () => {
     const [professions, setProfession] = useState([]);
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
-    const pageSize = 8; // количество отображаемых юзеров на странице
+    const pageSize = 4; // количество отображаемых юзеров на странице
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
 
@@ -40,13 +40,27 @@ const UsersList = () => {
         // console.log(id);
     };
 
+    const handleSearch = ({ target }) => {
+        // console.log(target.value);
+        setSearch(target.value);
+        if (search) {
+            setSelectedProf();
+            setCurrentPage(1);
+        }
+    };
+
     useEffect(() => {
         api.professions.fetchAll().then((data) => setProfession(data));
     }, []);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedProf]);
+
     const handleProfessionSelect = (item) => {
         // console.log(item);
         setSelectedProf(item);
+        setSearch("");
     };
 
     const handlePageChange = (pageIndex) => {
@@ -91,19 +105,6 @@ const UsersList = () => {
                 setCurrentPage(currentPage - 1);
             }
         }, [users]);
-
-        useEffect(() => {
-            setCurrentPage(1);
-        }, [selectedProf]);
-
-        const handleSearch = ({ target }) => {
-            // console.log(target.value);
-            setSearch(target.value);
-            if (search) {
-                setSelectedProf();
-                setCurrentPage(1);
-            }
-        };
 
         return (
             <div className="d-flex">

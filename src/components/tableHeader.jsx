@@ -38,7 +38,9 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
                                 ? () => handleSort(columns[column].path)
                                 : undefined
                         } // возможность сортировать элементы в колонках только при наличии итератора
-                        {...{ role: columns[column].path && "button" }} // при наличии итератора добавляется поведение указателя мыши
+                        {...{
+                            role: columns[column].path && "button"
+                        }} // при наличии итератора добавляется поведение указателя мыши
                         scope="col"
                     >
                         {columns[column].name}
