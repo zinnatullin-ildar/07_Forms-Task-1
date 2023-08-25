@@ -1,24 +1,28 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import api from "../api";
+import _ from "lodash";
+import { paginate } from "../utils/paginate";
 import Pagination from "./pagination";
 import UserTable from "./usersTable";
 import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
-import { paginate } from "../utils/paginate";
-import api from "../api";
-import PropTypes from "prop-types";
-import _ from "lodash";
 
 const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState([]);
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
-    const pageSize = 4; // количество отображаемых юзеров на странице
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
+    const pageSize = 12; // количество отображаемых юзеров на странице
 
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data));
+    }, []);
+
+    useEffect(() => {
+        api.professions.fetchAll().then((data) => setProfession(data));
     }, []);
 
     const handleDelete = (userId) => {
@@ -43,15 +47,9 @@ const UsersList = () => {
     const handleSearch = ({ target }) => {
         // console.log(target.value);
         setSearch(target.value);
-        if (search) {
-            setSelectedProf();
-            setCurrentPage(1);
-        }
+        if (search !== "") setSelectedProf();
+        setCurrentPage(1);
     };
-
-    useEffect(() => {
-        api.professions.fetchAll().then((data) => setProfession(data));
-    }, []);
 
     useEffect(() => {
         setCurrentPage(1);
