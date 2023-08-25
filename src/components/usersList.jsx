@@ -47,19 +47,21 @@ const UsersList = () => {
     const handleSearch = ({ target }) => {
         // console.log(target.value);
         setSearch(target.value);
-        if (search !== "") setSelectedProf();
-        setCurrentPage(1);
+        if (search !== "") {
+            setSelectedProf();
+            setCurrentPage(1);
+        }
     };
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [selectedProf]);
 
     const handleProfessionSelect = (item) => {
         // console.log(item);
         setSelectedProf(item);
         setSearch("");
     };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedProf]);
 
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
