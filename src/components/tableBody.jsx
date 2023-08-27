@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import _ from "lodash";
 
-const TableBody = ({ data, columns, search }) => {
+const TableBody = ({ data, columns }) => {
     const renderContent = (item, column) => {
         if (columns[column].component) {
             const component = columns[column].component;
@@ -17,25 +17,20 @@ const TableBody = ({ data, columns, search }) => {
 
     return (
         <tbody>
-            {data
-                .filter((item) =>
-                    item.name.toLowerCase().includes(search.toLowerCase())
-                )
-                .map((item) => (
-                    <tr key={item._id}>
-                        {Object.keys(columns).map((column) => (
-                            <td key={column}>{renderContent(item, column)}</td>
-                        ))}
-                    </tr>
-                ))}
+            {data.map((item) => (
+                <tr key={item._id}>
+                    {Object.keys(columns).map((column) => (
+                        <td key={column}>{renderContent(item, column)}</td>
+                    ))}
+                </tr>
+            ))}
         </tbody>
     );
 }; // универсальная таблица под любой массив данных + поиск по имени
 
 TableBody.propTypes = {
     data: PropTypes.array.isRequired,
-    columns: PropTypes.object.isRequired,
-    search: PropTypes.string
+    columns: PropTypes.object.isRequired
 };
 
 export default TableBody;

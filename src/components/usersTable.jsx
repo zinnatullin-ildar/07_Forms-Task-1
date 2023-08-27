@@ -11,8 +11,7 @@ const UserTable = ({
     onSort,
     selectedSort,
     onToggleBookmark,
-    onDelete,
-    search
+    onDelete
 }) => {
     const columns = {
         name: {
@@ -63,7 +62,7 @@ const UserTable = ({
             data={users}
         >
             <TableHeader {...{ onSort, selectedSort, columns }} />
-            <TableBody {...{ columns, data: users, search }} />
+            <TableBody {...{ columns, data: users }} />
         </Table> // способ реализации, где Tableheader и TableBody как children
     );
 };
@@ -73,8 +72,7 @@ UserTable.propTypes = {
     onSort: PropTypes.func.isRequired,
     selectedSort: PropTypes.object.isRequired,
     onToggleBookmark: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired,
-    search: PropTypes.string
+    onDelete: PropTypes.func.isRequired
 };
 
 export default UserTable;

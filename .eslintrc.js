@@ -28,12 +28,17 @@ module.exports = {
         quotes: ["error", "double", { allowTemplateLiterals: true }], // использование двойных и обратных кавычек
         "space-before-function-paren": [
             "error",
-            { anonymous: "always", named: "never" }
+            {
+                anonymous: "always",
+                named: "never"
+            }
         ], // пробел: убираем в именованной и оставляем в анонимной функции
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
         "prettier/prettier": ["error", { endOfLine: "auto" }],
         "arrow-body-style": "off",
-        "prefer-arrow-callback": "off"
+        "prefer-arrow-callback": "off",
+        "multiline-ternary": ["off", "never"],
+        "spaced-comment": ["off", "never"]
     }
 };

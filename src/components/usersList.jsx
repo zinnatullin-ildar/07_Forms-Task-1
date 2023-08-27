@@ -11,11 +11,11 @@ import SearchStatus from "./searchStatus";
 const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState([]);
+    const [search, setSearch] = useState("");
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
     const [users, setUsers] = useState([]);
-    const [search, setSearch] = useState("");
-    const pageSize = 12; // количество отображаемых юзеров на странице
+    const pageSize = 4; // количество отображаемых юзеров на странице
 
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data));
@@ -30,38 +30,32 @@ const UsersList = () => {
     };
 
     const handleToggleBookmark = (id) => {
-        setUsers(
-            users.map((user) => {
-                if (user._id === id) {
-                    return {
-                        ...user,
-                        bookmark: !user.bookmark
-                    };
-                }
-                return user;
-            })
-        );
+        const newArray = users.map((user) => {
+            if (user._id === id) {
+                return { ...user, bookmark: !user.bookmark };
+            }
+            return user;
+        });
         // console.log(id);
-    };
-
-    const handleSearch = ({ target }) => {
-        // console.log(target.value);
-        setSearch(target.value);
-        if (search !== "") {
-            setSelectedProf();
-            setCurrentPage(1);
-        }
-    };
-
-    const handleProfessionSelect = (item) => {
-        // console.log(item);
-        setSelectedProf(item);
-        setSearch("");
+        setUsers(newArray);
     };
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedProf]);
+    }, [selectedProf, search]);
+
+    const handleProfessionSelect = (item) => {
+        // console.log(item);
+        if (search !== "") {
+            setSearch("");
+        }
+        setSelectedProf(item);
+    };
+    const handleSearch = ({ target }) => {
+        // console.log(target.value);
+        setSelectedProf();
+        setSearch(target.value);
+    };
 
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
@@ -73,66 +67,73 @@ const UsersList = () => {
         setSortBy(item);
     };
 
+    useEffect(() => {
+        if (users) {
+            const filteredUsers = selectedProf
+                ? users.filter(
+                      (user) =>
+                          JSON.stringify(user.profession) ===
+                          JSON.stringify(selectedProf)
+                  )
+                : users;
+            const usersCrop = paginate(filteredUsers, currentPage, pageSize);
+            if (usersCrop.length === 0 && currentPage > 1) {
+                setCurrentPage(currentPage - 1);
+            }
+        }
+    }, [users]);
+
     if (users) {
-        const filteredUsers = selectedProf
+        const filteredUsers = search
+            ? users.filter((user) =>
+                  user.name.toLowerCase().includes(search.toLowerCase())
+              )
+            : selectedProf
             ? users.filter(
                   (user) =>
                       JSON.stringify(user.profession) ===
-                      JSON.stringify(selectedProf) // данные приводим к строке и сравниваем строки
+                      JSON.stringify(selectedProf)
               )
             : users;
 
         const count = filteredUsers.length; // количество юзеров
-
         const sortedUsers = _.orderBy(
             filteredUsers,
             [sortBy.path],
             [sortBy.order]
-        ); // выборка отсортированных юзеров (asc - по возрастанию, desс - по убыванию)
-
+        ); // выборка отсортированных юзеров (asc - по возрастанию, desс - по-убыванию)
         const usersCrop = paginate(sortedUsers, currentPage, pageSize); // выборка отфильтрованных юзеров
-        // console.log(userCrop);
-
+        // console.log(usersCrop);
         const clearFilter = () => {
-            setSelectedProf(); // для очистки ничего не устанавливаем (undefined)
-        };
-
-        useEffect(() => {
-            if (
-                currentPage > Math.ceil(users.length / pageSize) &&
-                currentPage > 1
-            ) {
-                setCurrentPage(currentPage - 1);
-            }
-        }, [users]);
+            setSelectedProf();
+        }; // для очистки ничего не принемаем, возвращает undefined
 
         return (
             <div className="d-flex">
                 {professions && (
-                    <div className="d-flex flex-column flex-shrink p-3">
+                    <div className="d-flex flex-column flex-shrink-0 p-3">
                         <GroupList
                             items={professions}
                             selectedItem={selectedProf}
                             onItemSelect={handleProfessionSelect}
                         />
                         <button
-                            className="btn btn-secondary m-2"
+                            className="btn btn-secondary mt-2"
                             onClick={clearFilter}
                         >
                             Очистить
                         </button>
                     </div>
                 )}
-
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
                     <input
-                        className="w-50 mx-auto"
+                        type="text"
                         name="search"
                         placeholder="Search..."
+                        value={search}
                         onChange={handleSearch}
                     />
-
                     {count > 0 && (
                         <UserTable
                             users={usersCrop}
@@ -140,7 +141,6 @@ const UsersList = () => {
                             selectedSort={sortBy}
                             onDelete={handleDelete}
                             onToggleBookmark={handleToggleBookmark}
-                            search={search}
                         />
                     )}
                     <div className="d-flex justify-content-center">
@@ -155,6 +155,7 @@ const UsersList = () => {
             </div>
         );
     }
+
     return "Loading...";
 };
 
